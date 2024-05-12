@@ -34,7 +34,7 @@ async def read_game(item_id: int):
 
 # Создание нового пользователя
 @app.post("/db_games/", response_model=Game)
-async def create_user(game: Game):
+async def create_game(game: Game):
     db_games.append(game)
     return game
 
@@ -43,7 +43,7 @@ async def create_user(game: Game):
 
 
 @app.put("/db_games/{item_id}", response_model=Game)
-async def update_user(item_id: int, game: Game):
+async def update_game(item_id: int, game: Game):
     for db_game in db_games:
         if db_game.item_id == item_id:
             db_game.name = game.name
@@ -55,7 +55,7 @@ async def update_user(item_id: int, game: Game):
 
 # Удаление пользователя по его ID
 @app.delete("/db_games/{item_id}", response_model=Game)
-async def delete_user(item_id: int):
+async def delete_game(item_id: int):
     db_game_index = next((i for i, u in enumerate(db_games) if u.item_id == item_id), None)
     if db_game_index is None:
         raise HTTPException(status_code=404, detail="Game not found")
