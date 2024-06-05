@@ -1,0 +1,34 @@
+--1. Вывести идентификаторы курсов (предметов) и вывести всю информацию о курсах(предметах)--
+SELECT * FROM course
+--2. Вывести идентификатор курса с названием "Machine Learning".
+SELECT courseid FROM course WHERE coursetitle= 'Machine Learning'
+--3. Вывести название курса с идентификатором 5--
+SELECT coursetitle FROM course WHERE courseid= 5
+--4. Вывести список мобильных телефонов (PhoneType = 'cell') из таблицы "PHONE_LIST"--
+SELECT phone FROM phone_list WHERE phonetype= 'cell'
+--5. Вывести количество отметок, которое получил студент с идентификатором (номером зачетки) 345576--
+SELECT COUNT(grade) FROM exam_result WHERE studentid= 345576
+--6. Вывести номера зачеток (идентификаторы студентов) и средние баллы, которые получили студенты за все экзамены--
+SELECT studentid, AVG(grade) from exam_result
+GROUP BY studentid
+--7. Вывести минимальный и максимальный баллы, полученные студентами на экзаменах--
+SELECT MIN(grade), max(grade) from exam_result
+--8. Найти пересечение идентификаторов студентов, получавших и 2, и 5. Каждый идентификатор из пересечения должен встречаться не более одного раза--
+SELECT DISTINCT studentid
+FROM exam_result
+WHERE grade = 2
+INTERSECT
+SELECT DISTINCT studentid
+FROM exam_result
+WHERE grade = 5;
+--9. Найти объединение идентификаторов студентов, у которых есть хоть одна 2 и/или хоть одна 5. Каждый идентификатор из пересечения должен встречаться не более одного раза--
+SELECT DISTINCT studentid
+FROM (
+  SELECT studentid
+  FROM exam_result
+  WHERE grade = 2
+  UNION ALL
+  SELECT studentid
+  FROM exam_result
+  WHERE grade = 5
+) AS tmp;
