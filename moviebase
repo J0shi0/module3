@@ -1,0 +1,124 @@
+--1.Создание таблиц--
+
+-- Movies table
+CREATE TABLE IF NOT EXISTS Movies (
+  ID SERIAL PRIMARY KEY,
+  Title VARCHAR(255) NOT NULL,
+  ReleaseDate DATE,
+  Genre VARCHAR(100),
+  Rating DECIMAL(2, 1),
+  Description TEXT
+);
+
+-- People table
+CREATE TABLE IF NOT EXISTS People (
+  ID SERIAL PRIMARY KEY,
+  Name VARCHAR(255) NOT NULL,
+  Role VARCHAR(100)
+);
+
+-- MoviePeople table (associates movies and people)
+CREATE TABLE IF NOT EXISTS MoviePeople (
+  ID SERIAL PRIMARY KEY,
+  MovieID INT NOT NULL,
+  PeopleID INT NOT NULL,
+  FOREIGN KEY (MovieID) REFERENCES Movies(ID) ON DELETE CASCADE,
+  FOREIGN KEY (PeopleID) REFERENCES People(ID) ON DELETE CASCADE
+);
+
+-- Users table
+CREATE TABLE IF NOT EXISTS Users (
+  ID SERIAL PRIMARY KEY,
+  Username VARCHAR(50) NOT NULL UNIQUE,
+  Email VARCHAR(255) NOT NULL UNIQUE,
+  Password VARCHAR(255) NOT NULL
+);
+
+-- Reviews table
+CREATE TABLE IF NOT EXISTS Reviews (
+  ID SERIAL PRIMARY KEY,
+  MovieID INT NOT NULL,
+  UserID INT NOT NULL,
+  Rating DECIMAL(2, 1),
+  ReviewText TEXT,
+  ReviewDate DATETIME,
+  FOREIGN KEY (MovieID) REFERENCES Movies(ID) ON DELETE CASCADE,
+  FOREIGN KEY (UserID) REFERENCES Users(ID) ON DELETE CASCADE
+);
+
+-- News table
+CREATE TABLE IF NOT EXISTS News (
+  ID SERIAL PRIMARY KEY,
+  Title VARCHAR(255) NOT NULL,
+  Content TEXT,
+  Author VARCHAR(255),
+  PublishDate DATETIME
+);
+
+--2. Заполнение таблиц данными--
+
+INSERT INTO Movies (Title, ReleaseDate, Genre, Rating, Description) VALUES 
+('Requiem for a Dream', '2022-01-01', 'Drama', 8.5, 'Description of Movie1'), 
+('The Best Years of Our Lives', '2023-05-10', 'Action', 7.2, 'Description of Movie2');
+
+INSERT INTO People (Name, Role) VALUES 
+('Person1', 'Actor'), 
+('Person2', 'Director');
+
+INSERT INTO MoviePeople (MovieID, PeopleID) VALUES 
+(1, 1), 
+(1, 2);
+
+INSERT INTO Users (Username, Email, Password) VALUES 
+('User1', 'user1@example.com', 'password1'), 
+('User2', 'user2@example.com', 'password2');
+
+INSERT INTO Reviews (MovieID, UserID, Rating, ReviewText, ReviewDate) VALUES 
+(1, 1, 9.0, 'Great movie!', '2023-06-01'), 
+(2, 2, 7.5, 'Good action scenes.', '2023-06-02');
+
+INSERT INTO News (Title, Content, Author, PublishDate) VALUES 
+('News1', 'Content of News1', 'Editor1', '2023-06-03'), 
+('News2', 'Content of News2', 'Editor2', '2023-06-04');
+
+--3. Запросы БД
+1. Get a list of all movies with details:
+SELECT * FROM Movies;
+
+2. Search movies by genre and release date:
+SELECT * FROM Movies
+WHERE Genre = 'Drama' AND ReleaseDate >= '2000-01-01';
+
+3. Get a list of actors and their roles in a specific movie:
+SELECT People.Name, MoviePeople.Role
+FROM MoviePeople
+JOIN People ON MoviePeople.PeopleID = People.ID
+WHERE MoviePeople.MovieID = 1; -- Replace 1 with the desired movie ID
+
+4. Get a list of reviews and ratings for a specific movie:
+SELECT Users.Username, Reviews.Rating, Reviews.ReviewText
+FROM Reviews
+JOIN Users ON Reviews.UserID = Users.ID
+WHERE Reviews.MovieID = 1; -- Replace 1 with the desired movie ID
+
+5. Add a new movie:
+INSERT INTO Movies (Title, ReleaseDate, Genre, Rating, Description)
+VALUES ('The Matrix', '1999-03-24', 'Sci-Fi, Action', 8.7, 'A computer hacker learns that the world he lives in is actually a computer simulation, and he joins a rebel group to fight against the machines that control it.');
+
+6. Update movie information:
+UPDATE Movies
+SET Title = 'The Matrix Reloaded', Genre = 'Sci-Fi, Action, Adventure'
+WHERE ID = 2; -- Replace 2 with the ID of the movie you want to update
+
+7. Delete a movie
+DELETE FROM Movies
+WHERE ID = 3; -- Replace 3 with the ID of the movie you want to delete
+
+8. Add a review:
+INSERT INTO Reviews (MovieID, UserID, Rating, ReviewText, ReviewDate)
+VALUES (1, 1, 8.5, 'This is an amazing movie!', '2024-06-17'); -- Replace values with your data
+
+9. Delete a review:
+DELETE FROM Reviews
+WHERE ID = 1; -- Replace 1 with the ID of the review you want to delete
+
